@@ -173,7 +173,7 @@ function App() {
           aria-haspopup="dialog"
           aria-expanded={showLetter}
         >
-          🌷 Open Your Birthday Surprise 🌷
+          🌷 Open 💗
         </button>
 
         <div className="footer-message">Made especially for you 🌷</div>
