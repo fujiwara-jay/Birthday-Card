@@ -225,7 +225,7 @@ function App() {
             <div className="signature">
               Your love, ❤️
               <br />
-              <strong>God bless you and your family. I love you Always!🌷</strong>
+              <strong>God bless you and your family. I Love You Always!🌷</strong>
             </div>
           </div>
         </div>
