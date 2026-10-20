@@ -26,6 +26,8 @@ function App() {
   const [showLetter, setShowLetter] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
   const audioCtxRef = useRef(null);
+  const scheduledNodesRef = useRef([]);
+  const isPlayingRef = useRef(false);
   const timeoutsRef = useRef([]);
 
   // 🎵 1 Minute 15 Second "Happy Birthday" Music Box Melody
@@ -33,27 +35,35 @@ function App() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) return;
-      
+
+      // Create the context ONLY inside a user gesture (the click)
       if (!audioCtxRef.current) {
         audioCtxRef.current = new AudioContext();
       }
       const ctx = audioCtxRef.current;
-      if (ctx.state === "suspended") ctx.resume();
 
-      const tempo = 0.4; // Speed of the song (lower = slower)
-      
+      // Resume if suspended — must happen synchronously in the click
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
+
+      // If a melody is already playing, don't start a second one
+      if (isPlayingRef.current) return;
+      isPlayingRef.current = true;
+
+      const tempo = 0.4;
+
       // Notes: G4(392), A4(440), B4(493.88), C5(523.25), D5(587.33), E5(659.25), F5(698.46), G5(783.99)
-      // 1 = quarter note, 2 = half note
       const song = [
         // Verse 1
         { f: 392.00, d: 0.75 }, { f: 392.00, d: 0.25 }, { f: 440.00, d: 1 }, { f: 392.00, d: 1 }, { f: 523.25, d: 1 }, { f: 493.88, d: 2 },
         { f: 392.00, d: 0.75 }, { f: 392.00, d: 0.25 }, { f: 440.00, d: 1 }, { f: 392.00, d: 1 }, { f: 587.33, d: 1 }, { f: 523.25, d: 2 },
         { f: 392.00, d: 0.75 }, { f: 392.00, d: 0.25 }, { f: 783.99, d: 1 }, { f: 659.25, d: 1 }, { f: 523.25, d: 1 }, { f: 493.88, d: 1 }, { f: 440.00, d: 2 },
         { f: 698.46, d: 0.75 }, { f: 698.46, d: 0.25 }, { f: 659.25, d: 1 }, { f: 523.25, d: 1 }, { f: 587.33, d: 1 }, { f: 523.25, d: 2 },
-        
+
         // Musical pause between verses
         { f: 0, d: 2 },
-        
+
         // Verse 2 (Repeat)
         { f: 392.00, d: 0.75 }, { f: 392.00, d: 0.25 }, { f: 440.00, d: 1 }, { f: 392.00, d: 1 }, { f: 523.25, d: 1 }, { f: 493.88, d: 2 },
         { f: 392.00, d: 0.75 }, { f: 392.00, d: 0.25 }, { f: 440.00, d: 1 }, { f: 392.00, d: 1 }, { f: 587.33, d: 1 }, { f: 523.25, d: 2 },
@@ -61,7 +71,14 @@ function App() {
         { f: 698.46, d: 0.75 }, { f: 698.46, d: 0.25 }, { f: 659.25, d: 1 }, { f: 523.25, d: 1 }, { f: 587.33, d: 1 }, { f: 523.25, d: 2 }
       ];
 
+      // Clear any leftover nodes from a previous run
+      scheduledNodesRef.current.forEach((n) => {
+        try { n.stop(); } catch (e) {}
+      });
+      scheduledNodesRef.current = [];
+
       let startTime = ctx.currentTime + 0.1;
+      const nodes = [];
 
       song.forEach((note) => {
         if (note.f === 0) {
@@ -71,12 +88,10 @@ function App() {
 
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        
-        // Triangle wave with a soft flute/music box feel
+
         osc.type = "triangle";
         osc.frequency.setValueAtTime(note.f, startTime);
 
-        // Soft envelope: gentle fade in/out to sound like a music box
         const duration = note.d * tempo;
         gain.gain.setValueAtTime(0, startTime);
         gain.gain.linearRampToValueAtTime(0.15, startTime + 0.1);
@@ -84,27 +99,40 @@ function App() {
 
         osc.connect(gain);
         gain.connect(ctx.destination);
-        
+
         osc.start(startTime);
         osc.stop(startTime + duration + 0.4);
-        
-        startTime += duration; 
+
+        nodes.push(osc);
+        startTime += duration;
       });
+
+      scheduledNodesRef.current = nodes;
+
+      // When the last note is scheduled to stop, mark as no longer playing
+      const totalSeconds = startTime - (ctx.currentTime + 0.1);
+      const endTimer = setTimeout(() => {
+        isPlayingRef.current = false;
+      }, (totalSeconds + 0.5) * 1000);
+      timeoutsRef.current.push(endTimer);
     } catch (e) {
       console.log("Audio play failed:", e);
+      isPlayingRef.current = false;
     }
   };
 
   const handleCelebrate = () => {
-    // Clear previous audio timeouts if clicked again
+    // Clear previous UI timeouts if clicked again
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
 
-    playLongBirthdayMelody(); // 🎵 Plays the full 1+ minute song
-    
+    // 🎵 This runs synchronously inside the click handler → allowed to play
+    playLongBirthdayMelody();
+
     setCelebrate(true);
     setShowLetter(true);
-    setTimeout(() => setCelebrate(false), 5000);
+    const t = setTimeout(() => setCelebrate(false), 5000);
+    timeoutsRef.current.push(t);
   };
 
   const closeLetter = () => setShowLetter(false);
@@ -126,6 +154,19 @@ function App() {
     if (showLetter) window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [showLetter]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      scheduledNodesRef.current.forEach((n) => {
+        try { n.stop(); } catch (e) {}
+      });
+      if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
+        audioCtxRef.current.close().catch(() => {});
+      }
+    };
+  }, []);
 
   return (
     <div
