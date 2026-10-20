@@ -443,7 +443,7 @@ h1 span { color: #5ba8df; font-style: italic; }
   h1 { font-size: clamp(32px, 9vw, 42px); line-height: 1.15; margin-bottom: 20px; }
   .intro { font-size: 15px; line-height: 1.8; }
   
-  /* --- FLUID TULIPS (No scale hack, just perfect sizing) --- */
+  /* --- FLUID TULIPS --- */
   .tulip-garden { 
     height: clamp(160px, 45vw, 200px); 
     margin-top: 25px; 
