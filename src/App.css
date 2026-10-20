@@ -443,15 +443,15 @@ h1 span { color: #5ba8df; font-style: italic; }
   h1 { font-size: clamp(32px, 9vw, 42px); line-height: 1.15; margin-bottom: 20px; }
   .intro { font-size: 15px; line-height: 1.8; }
   
-  /* --- SCALE TULIPS TO FIT MOBILE SCREEN PERFECTLY --- */
+  /* --- FLUID TULIPS (No scale hack, just perfect sizing) --- */
   .tulip-garden { 
-    height: 200px; 
+    height: clamp(160px, 45vw, 200px); 
     margin-top: 25px; 
   }
   .tulip { 
-    transform: scale(0.75); 
-    transform-origin: bottom center;
-    bottom: 25px;
+    width: clamp(40px, 15vw, 60px); 
+    height: clamp(140px, 45vw, 180px); 
+    bottom: 25px; 
   }
 
   /* Button: full-width, tall tap target, active feedback */
@@ -526,9 +526,9 @@ h1 span { color: #5ba8df; font-style: italic; }
   h1 { font-size: clamp(28px, 8.5vw, 34px); }
   .intro { font-size: 14px; }
   
-  /* Scale even further down for very small screens */
-  .tulip-garden { height: 180px; margin-top: 20px; }
-  .tulip { transform: scale(0.65); bottom: 15px; }
+  /* Fluid sizing adjusts further for tiny screens */
+  .tulip-garden { height: 150px; margin-top: 20px; }
+  .tulip { width: 45px; height: 150px; bottom: 18px; }
   
   .letter { padding: 36px 15px 24px; }
   .letter h2 { font-size: 24px; }
@@ -552,8 +552,8 @@ h1 span { color: #5ba8df; font-style: italic; }
   h1 { font-size: clamp(30px, 6vw, 45px); margin-bottom: 12px; }
   .intro { font-size: 14px; line-height: 1.6; }
   
-  .tulip-garden { height: 140px; margin-top: 15px; }
-  .tulip { transform: scale(0.6); bottom: 10px; }
+  .tulip-garden { height: 130px; margin-top: 15px; }
+  .tulip { width: 40px; height: 130px; bottom: 15px; }
   
   .letter-overlay { padding: 12px; align-items: flex-start; }
   .letter { 
