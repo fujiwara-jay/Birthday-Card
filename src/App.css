@@ -442,7 +442,17 @@ h1 span { color: #5ba8df; font-style: italic; }
   .small-title { font-size: 11px; letter-spacing: 2px; line-height: 1.7; margin-bottom: 15px; }
   h1 { font-size: clamp(32px, 9vw, 42px); line-height: 1.15; margin-bottom: 20px; }
   .intro { font-size: 15px; line-height: 1.8; }
-  .tulip-garden { height: 220px; margin-top: 25px; }
+  
+  /* --- SCALE TULIPS TO FIT MOBILE SCREEN PERFECTLY --- */
+  .tulip-garden { 
+    height: 200px; 
+    margin-top: 25px; 
+  }
+  .tulip { 
+    transform: scale(0.75); 
+    transform-origin: bottom center;
+    bottom: 25px;
+  }
 
   /* Button: full-width, tall tap target, active feedback */
   .birthday-button {
@@ -462,10 +472,10 @@ h1 span { color: #5ba8df; font-style: italic; }
     box-shadow: 0 6px 16px rgba(57, 143, 201, 0.35);
   }
 
-  /* --- CENTERED MODAL FOR PHONE (replaces bottom sheet) --- */
+  /* --- CENTERED MODAL FOR PHONE --- */
   .letter-overlay {
     padding: 16px;
-    align-items: center; /* Centers it vertically */
+    align-items: center;
   }
   
   .letter {
@@ -481,7 +491,6 @@ h1 span { color: #5ba8df; font-style: italic; }
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
 
-  /* Fixed position close button in the corner */
   .letter-close {
     position: absolute;
     top: 12px;
@@ -495,7 +504,6 @@ h1 span { color: #5ba8df; font-style: italic; }
   .letter-decoration { font-size: 23px; margin-bottom: 12px; margin-top: 10px; }
   .letter h2 { font-size: 26px; margin-bottom: 16px; }
   
-  /* Center text on phones for a cleaner card look */
   .letter p { 
     font-size: 15px; 
     line-height: 1.7; 
@@ -517,7 +525,10 @@ h1 span { color: #5ba8df; font-style: italic; }
   .small-title { font-size: 10px; letter-spacing: 1.5px; }
   h1 { font-size: clamp(28px, 8.5vw, 34px); }
   .intro { font-size: 14px; }
-  .tulip-garden { height: 190px; margin-top: 20px; }
+  
+  /* Scale even further down for very small screens */
+  .tulip-garden { height: 180px; margin-top: 20px; }
+  .tulip { transform: scale(0.65); bottom: 15px; }
   
   .letter { padding: 36px 15px 24px; }
   .letter h2 { font-size: 24px; }
@@ -540,9 +551,10 @@ h1 span { color: #5ba8df; font-style: italic; }
   .small-title { margin-bottom: 10px; }
   h1 { font-size: clamp(30px, 6vw, 45px); margin-bottom: 12px; }
   .intro { font-size: 14px; line-height: 1.6; }
-  .tulip-garden { height: 175px; margin-top: 15px; }
   
-  /* Ensure landscape phones can scroll the letter properly */
+  .tulip-garden { height: 140px; margin-top: 15px; }
+  .tulip { transform: scale(0.6); bottom: 10px; }
+  
   .letter-overlay { padding: 12px; align-items: flex-start; }
   .letter { 
     margin: auto; 
@@ -555,7 +567,6 @@ h1 span { color: #5ba8df; font-style: italic; }
 
 /* ========================= TOUCHSCREEN DEVICES ========================= */
 @media (hover: none) and (pointer: coarse) {
-  /* Disable hover effects that "stick" on touch */
   .birthday-button:hover,
   .letter-close:hover {
     transform: none;
@@ -568,8 +579,6 @@ h1 span { color: #5ba8df; font-style: italic; }
     transform: scale(0.9);
     background: rgba(121, 199, 245, 0.45);
   }
-
-  /* Prevent hover-only styles from latching */
   .birthday-button { -webkit-appearance: none; appearance: none; }
 }
 
