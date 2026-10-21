@@ -256,7 +256,7 @@ function App() {
             </p>
 
             <p>
-              Thank you for always being there for me and making everyday moments feel special.
+              May you and your family be blessed with many more birthdays and abundant blessings to come. May your days be filled with love, prosperity, and endless joy.
             </p>
 
             <p className="final-message">
